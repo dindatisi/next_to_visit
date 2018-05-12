@@ -46,14 +46,14 @@ def get_recommendation(df,destination, index_col,cosine_sim):
 	idx = int(indices[destination])
 	similarity_scores = list(enumerate(cosine_sim[idx]))
 	similarity_scores = sorted(similarity_scores, key=lambda x:x[1],reverse = True)
-	# show top 10 recommendations
-	similarity_scores = similarity_scores[1:10]
+	# only consider top 5 most similar
+	similarity_scores = similarity_scores[1:6]
 	rec_indices = [i[0] for i in similarity_scores]
 	df_result = df.iloc[rec_indices]
 	score_list = [score[1] for score in similarity_scores]
 	df_result['similarity_score'] = score_list	
 	# return only top 5 after sorting
-	return sort_result(df_result)[:6]
+	return sort_result(df_result)
 
 def get_review_count_quintile(df):
 	df.review_count.fillna(0,inplace=True)
@@ -73,6 +73,7 @@ def sort_result(df_result):
 	df_result = get_place_popularity(df_result)
 	max_popularity = df_result['popularity_index'].max()
 	max_similarity = df_result['similarity_score'].max()
+	# give more weight for similarity
 	df_result['relative_score'] = 10* (df_result['popularity_index'].divide(max_popularity)) * (df_result['similarity_score'].divide(max_similarity))
 	return df_result.sort_values('relative_score',ascending=False)
 

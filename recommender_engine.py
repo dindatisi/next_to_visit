@@ -1,36 +1,7 @@
 import pandas as pd
 import numpy as np
-import nltk
-from nltk.stem.porter import PorterStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
-
-# various preprocessing
-def get_stemmed_words(df,col_name):
-	stemmer = PorterStemmer()
-	df['reviews_stemmed'] = df[col_name].astype('str')
-	df['reviews_stemmed'] = df['reviews_stemmed'].apply(lambda y: stemmer.stem(y))
-	return df
-
-def combine_categories(categories_series,splitter=";"):
-	# put everything on lowercase
-	categories = categories_series.str.lower()
-	# remove space (some categories consist of two words)
-	categories = categories.str.replace(" ","")
-	categories = categories.str.replace(splitter," ")
-	return categories
-
-def clean_unwanted_chars(str_series):
-	ignore_char = ['!','&','?',';', '.',',','”','“']
-	for char in ignore_char:
-		str_series = str_series.str.replace(char,"")
-	return str_series
-
-def get_wordsoup(df,cols):
-	# input cols as list of column names
-	for col in cols:
-		df['wordsoup'] += (" " + df[col])
-	return df
 
 def get_review_count_quintile(df):
 	df.review_count.fillna(0,inplace=True)

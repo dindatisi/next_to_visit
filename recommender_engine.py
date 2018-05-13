@@ -4,6 +4,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics.pairwise import linear_kernel
+import nltk
+from nltk import SnowballStemmer
 
 def get_review_count_quintile(df):
 	df.review_count.fillna(0,inplace=True)
@@ -17,15 +19,14 @@ def get_place_popularity(df):
 	df['popularity_index'] = df['count_quintile'] * df['rating'].astype(int)
 	return df
 
-def get_stemmed_words(word_tokens_se):
+def get_stemmed_words(tokens):
 	stemmer = SnowballStemmer('english')
-	wordlist = word_tokens_se.tolist()
-	stemmed = [[stemmer.stem(w) for w in i] for i in wordlist]
+	stemmed = [stemmer.stem(w) for w in tokens] 
 	return stemmed
 
 # tf-idf & similarity
-def tokenize(wordsoup_se):
-	tokens = wordsoup_se.apply(lambda y: nltk.word_tokenize(y))
+def tokenize(wordsoup):
+	tokens = nltk.word_tokenize(wordsoup)
 	stemmed_tokens = get_stemmed_words(tokens)
 	return stemmed_tokens
 

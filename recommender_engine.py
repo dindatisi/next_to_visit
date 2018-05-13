@@ -1,7 +1,11 @@
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics.pairwise import linear_kernel
+import nltk
+from nltk import SnowballStemmer
 
 def get_review_count_quintile(df):
 	df.review_count.fillna(0,inplace=True)
@@ -15,9 +19,19 @@ def get_place_popularity(df):
 	df['popularity_index'] = df['count_quintile'] * df['rating'].astype(int)
 	return df
 
+def get_stemmed_words(tokens):
+	stemmer = SnowballStemmer('english')
+	stemmed = [stemmer.stem(w) for w in tokens] 
+	return stemmed
+
 # tf-idf & similarity
+def tokenize(wordsoup):
+	tokens = nltk.word_tokenize(wordsoup)
+	stemmed_tokens = get_stemmed_words(tokens)
+	return stemmed_tokens
+
 def get_tfidf(wordsoup_series):
-	tfidf = TfidfVectorizer(stop_words='english')
+	tfidf = TfidfVectorizer(tokenizer=tokenize, stop_words='english')
 	wordsoup_series = wordsoup_series.fillna('')
 	tfidf_matrix = tfidf.fit_transform(wordsoup_series)
 	return tfidf_matrix
@@ -26,8 +40,16 @@ def get_cosine_sim(tfidf_matrix):
 	cosine_sim = linear_kernel(tfidf_matrix,tfidf_matrix)
 	return cosine_sim
 
+def get_count_similarity(df,col_se):
+	# fill missing value with empty string
+	col_se = col_se.fillna('') 
+	count = CountVectorizer(tokenizer=tokenize,stop_words='english')
+	count_matrix = count.fit_transform(col_se)
+	# compute cosine sim
+	cosine_sim = cosine_similarity(count_matrix, count_matrix)
+	return cosine_sim
 
-# aggregated
+# aggregate for recommendation
 def sort_result(df_result):
 	# calculate relative score between the recommended places for sorting
 	# scale is 0 - 10

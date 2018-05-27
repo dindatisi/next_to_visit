@@ -1,2 +1,24 @@
 
 __pycache__/recommender_engine.cpython-36.pyc
+
+name_url.csv
+
+venv/.Python
+
+venv/bin/pip
+
+venv/bin/flask
+
+venv/bin/f2py
+
+venv/bin/easy_install-3.6
+
+venv/bin/easy_install
+
+venv/bin/activate.fish
+
+venv/bin/activate.csh
+
+venv/bin/activate_this.py
+
+venv/bin/activate

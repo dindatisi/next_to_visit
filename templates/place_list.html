@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<main class="container signup-section">
+    <div class="section-content">
+      <h2>List of Places You Can Search</h2>
+      <p> The name of your destination should match one of these places. Otherwise we can't give you any recommendation.<p>
+      
+        <div class="places">
+          <h3> Place of Interests </h3>
+          {% for p in poi %}
+            <article>
+              <p>{{ p }}</p>            
+            </article>
+          {% endfor %}
+        </div>
+        
+        <br>
+        <div class="places">
+          <h3> Restaurants </h3>
+          {% for r in resto %}
+            <article>
+              <p>{{ r }}</p>            
+            </article>
+          {% endfor %}
+        </div>
+     
+    </div>
+    
+  </main>
+{% endblock %}

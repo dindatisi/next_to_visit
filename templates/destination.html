@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <main class="container signup-section">
+    <div class="section-content">
+      <h2>Get recommendation of similar places</h2>
+
+      <form method="POST" action="/destination">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+          {{ form.place_name.label }}
+
+          {% if form.place_name.errors %}
+            {% for error in form.place_name.errors %}
+              <p class="error-message">{{ error }}</p>
+            {% endfor %}
+          {% endif %}
+
+          {{ form.place_name }}
+        </div>
+
+        {{ form.submit(class="btn-primary") }}
+      </form>
+    </div>
+  </main>
+{% endblock %}

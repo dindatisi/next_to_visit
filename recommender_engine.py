@@ -91,12 +91,12 @@ def resto_recommender(destination_name):
 	tfidf_matrix = get_tfidf(df.rev_cat_soup.astype(str))
 	cosine_sim = get_cosine_sim(tfidf_matrix)
 	df_result = get_recommendation(df,destination_name, 'name',cosine_sim)
-	return df_result
+	return df_result.to_json(orient='records')
 
 def poi_recommender(destination_name):	
 	df = pd.read_csv('data/cleaned_poi.csv')
 	cosine_sim = get_count_similarity(df, df.rev_cat_soup.astype(str))
 	df_result = get_recommendation(df,destination_name, 'place_name',cosine_sim)	
-	return df_result
+	return df_result.to_json(orient='records')
 
 

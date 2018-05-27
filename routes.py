@@ -15,17 +15,6 @@ def index():
 def about():
 	return render_template("about.html")
 
-@app.route('/restaurant', methods=['GET','POST'])
-def resto_destination():
-	form = InputForm()
-	if request.method == 'POST':
-		if form.validate() == False:
-			return render_template('restaurant.html',form=form)
-		else:
-			return "Success!"
-	elif request.method =='GET':
-		return render_template("restaurant.html", form=form)
-
 @app.route('/place_list')
 def show_places():
 	place = Places()
@@ -33,10 +22,25 @@ def show_places():
 	poi = place.get_poi()
 	return render_template('place_list.html', poi=poi, resto=resto)
 
+@app.route('/restaurant', methods=['GET','POST'])
+def resto_destination():
+	form = InputForm()
+	results = []
+	destination = None
+	if request.method == 'POST':
+		if form.validate() == False:
+			return render_template('restaurant.html',form=form)
+		else:
+			r = Recommendation()
+			destination = form.place_name.data
+			results = r.resto_query(destination)
+			return render_template('restaurant.html', form=form,destination=destination,results = results)
+	elif request.method =='GET':
+		return render_template("restaurant.html", form=form)
+
 @app.route('/poi', methods=['GET','POST'])
 def poi_destination():
 	form = InputForm()
-
 	results = []
 	destination = None
 	if request.method == 'POST':
@@ -45,9 +49,8 @@ def poi_destination():
 		else:
 			r = Recommendation()
 			destination = form.place_name.data
-			results = r.query(destination)
-			names = r.get_name(results)
-			return render_template('poi.html', form=form,destination=destination,results = names)
+			results = r.poi_query(destination)
+			return render_template('poi.html', form=form,destination=destination,results = results)
 
 	elif request.method =='GET':
 		return render_template("poi.html", form=form)

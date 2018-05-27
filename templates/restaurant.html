@@ -5,7 +5,7 @@
   <main class="container signup-section">
     <div class="section-content">
       <h2>Get recommendation of similar places</h2>
-      <a href="#"><u> List of Restaurant in Database</u></a>
+      <a href="place_list"><u> List of Restaurant in Database</u></a>
 
       <form method="POST" action="/restaurant">
         {{ form.hidden_tag() }}
@@ -23,6 +23,17 @@
         </div>
 
         {{ form.submit(class="btn-primary") }}
+        <div class="section-content">
+        <div class="places">
+          {% for r in results %}
+            <article>
+              <a class="name" href="{{ r['url'] }}">{{ r['name'] }}</a>
+              <img src="{{ r['image'] }}"> </img>  
+              <br>
+              <br>    
+            </article>
+          {% endfor %}
+        </div>
       </form>
     </div>
   </main>

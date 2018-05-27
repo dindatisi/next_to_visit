@@ -6,6 +6,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics.pairwise import linear_kernel
 import nltk
 from nltk import SnowballStemmer
+import warnings
+
 
 def get_review_count_quintile(df):
 	df.review_count.fillna(0,inplace=True)
@@ -49,7 +51,7 @@ def get_count_similarity(df,col_se):
 	cosine_sim = cosine_similarity(count_matrix, count_matrix)
 	return cosine_sim
 
-# aggregate for recommendation
+
 def sort_result(df_result):
 	# calculate relative score between the recommended places for sorting
 	# scale is 0 - 10
@@ -74,16 +76,18 @@ def get_recommendation(df,destination, index_col,cosine_sim):
 	# return only top 5 after sorting
 	return sort_result(df_result)
 
+# aggregate for recommendation
+def resto_recommender(destination_name):
+	df = pd.read_csv('data/cleaned_resto.csv')
+	tfidf_matrix = get_tfidf(df.rev_cat_soup.astype(str))
+	cosine_sim = get_cosine_sim(tfidf_matrix)
+	df_result = get_recommendation(df,destination_name, 'name',cosine_sim)
+	return df_result
 
-
-
-
-
-
-	
-
-
-
-
+def poi_recommender(destination_name):	
+	df = pd.read_csv('data/cleaned_poi.csv')
+	cosine_sim = get_count_similarity(df, df.rev_cat_soup.astype(str))
+	df_result = get_recommendation(df,destination_name, 'place_name',cosine_sim)	
+	return df_result
 
 

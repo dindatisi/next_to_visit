@@ -9,6 +9,15 @@ from nltk import SnowballStemmer
 import warnings
 
 
+def get_place_name(place_type):
+	# for the purpose of listing down all places registered on database
+	if place_type == 'resto':
+		df = pd.read_csv('data/cleaned_resto.csv').sort_values('name')
+		return df.name.values.tolist()
+	elif place_type == 'poi':
+		df = pd.read_csv('data/cleaned_poi.csv').sort_values('place_name')
+		return df.place_name.values.tolist()
+
 def get_review_count_quintile(df):
 	df.review_count.fillna(0,inplace=True)
 	df['review_count'] = df.review_count.str.replace(',',"")

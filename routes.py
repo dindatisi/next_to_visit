@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from form import InputForm
-from model import Recommendation
+from models import Recommendation,Places
 
 
 app = Flask(__name__)
@@ -25,6 +25,13 @@ def resto_destination():
 			return "Success!"
 	elif request.method =='GET':
 		return render_template("restaurant.html", form=form)
+
+@app.route('/place_list')
+def show_places():
+	place = Places()
+	resto = place.get_resto()
+	poi = place.get_poi()
+	return render_template('place_list.html', poi=poi, resto=resto)
 
 @app.route('/poi', methods=['GET','POST'])
 def poi_destination():

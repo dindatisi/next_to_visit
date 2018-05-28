@@ -6,8 +6,10 @@
     <div class="section-content">
       <h2>List of Places You Can Search</h2>
       <p> The name of your destination should match one of these places. Otherwise we can't give you any recommendation.<p>
-      
-        <div class="places">
+      <a href="#poi"><u>See the lists of place of interests</u></a>
+      <a href="#restaurant"><u>See the lists of place of restaurants</u></a>
+           
+        <div class="places" id="poi">
           <h3> Place of Interests </h3>
           {% for p in poi %}
             <article>
@@ -17,7 +19,7 @@
         </div>
         
         <br>
-        <div class="places">
+        <div class="places" id="restaurant">
           <h3> Restaurants </h3>
           {% for r in resto %}
             <article>

@@ -7,25 +7,30 @@ from sklearn.metrics.pairwise import linear_kernel
 import nltk
 from nltk import SnowballStemmer
 import warnings
+import sqlite3 as sql
 
 
 def get_place_name(place_type):
 	# for the purpose of listing down all places registered on database
+	
 	if place_type == 'resto':
-		df = pd.read_csv('data/cleaned_resto.csv').sort_values('name')
+		conn = sql.connect('resto.db')
+		df = pd.read_sql('SELECT name FROM places',conn).sort_values('name')
 		return df.name.values.tolist()
 	elif place_type == 'poi':
-		df = pd.read_csv('data/cleaned_poi.csv').sort_values('place_name')
+		conn = sql.connect('poi.db')
+		df = pd.read_sql('SELECT place_name from places',conn).sort_values('place_name')
 		return df.place_name.values.tolist()
 
 def get_review_count_quintile(df):
-	df.review_count.fillna(0,inplace=True)
 	df['review_count'] = df.review_count.str.replace(',',"")
-	q = pd.qcut(df.review_count.astype(int),5,labels=[1,2,3,4,5])
+	try:
+		q = pd.qcut(df.review_count.astype(int),3,labels=[1,2,3],duplicates='drop')
+	except:
+		q = df.review_count
 	return q
-
+	
 def get_place_popularity(df):
-	df['rating'].fillna(0,inplace=True)
 	df['count_quintile'] = get_review_count_quintile(df)
 	df['popularity_index'] = df['count_quintile'] * df['rating'].astype(int)
 	return df
@@ -87,14 +92,16 @@ def get_recommendation(df,destination, index_col,cosine_sim):
 
 # aggregate for recommendation
 def resto_recommender(destination_name):
-	df = pd.read_csv('data/cleaned_resto.csv')
+	conn = sql.connect('resto.db')
+	df = pd.read_sql('SELECT name, name_link,rev_cat_soup, cuisines_categories, rating, review_count,postcode,thumbnail FROM places',conn)
 	tfidf_matrix = get_tfidf(df.rev_cat_soup.astype(str))
 	cosine_sim = get_cosine_sim(tfidf_matrix)
 	df_result = get_recommendation(df,destination_name, 'name',cosine_sim)
 	return df_result.to_json(orient='records')
 
 def poi_recommender(destination_name):	
-	df = pd.read_csv('data/cleaned_poi.csv')
+	conn = sql.connect('poi.db')
+	df = pd.read_sql('SELECT place_name, place_name_link,rev_cat_soup, categories, rating, review_count,postcode,thumbnail_image FROM places',conn)
 	cosine_sim = get_count_similarity(df, df.rev_cat_soup.astype(str))
 	df_result = get_recommendation(df,destination_name, 'place_name',cosine_sim)	
 	return df_result.to_json(orient='records')

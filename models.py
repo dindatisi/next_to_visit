@@ -9,11 +9,17 @@ class Recommendation(object):
 			name = row['place_name']
 			url = row['place_name_link']
 			image = row['thumbnail_image']
+			postcode = row['postcode']
+			score = row['relative_score']
+			category = row['categories']
 
 			d = { 
 			'name': name,
 			'url': url,
-			'image': image
+			'image': image,
+			'postcode': postcode,
+			'score': score,
+			'category': category
 			}
 			recommended.append(d)
 		return recommended
@@ -25,11 +31,17 @@ class Recommendation(object):
 			name = row['name']
 			url = row['name_link']
 			image = row['thumbnail']
+			postcode = row['postcode']
+			score = row['relative_score']
+			category = row['cuisines_categories']
 
 			d = { 
 			'name': name,
 			'url': url,
-			'image': image
+			'image': image,
+			'postcode': postcode,
+			'score': score,
+			'category': category
 			}
 			recommended.append(d)
 		return recommended

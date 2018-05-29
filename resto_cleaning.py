@@ -23,6 +23,12 @@ def get_wordsoup(df,cols):
 		df['wordsoup'] += (" " + df[col])
 	return df
 
+def populate_null(df):
+	df['review_count'].fillna("0",inplace=True)
+	df['rating'].fillna(0,inplace=True)
+	df['reviews_combined'].fillna("",inplace=True)
+	return df
+
 def main():	
 	df = pd.read_csv('data/merged_resto.csv')
 	print('cleaning & preprocessing')
@@ -34,7 +40,7 @@ def main():
 	print("\n", df['reviews_combined'].head())
 	
 	df['reviews_combined'] = clean_unwanted_chars(df.reviews_combined)
-
+	df = populate_null(df)
 	df['rev_cat_soup'] = df.reviews_combined + " " + df.categories
 	print("\n", df['rev_cat_soup'].head())
 	df.to_csv('data/cleaned_resto.csv',index=False)
